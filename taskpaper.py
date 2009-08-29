@@ -85,6 +85,7 @@ class TaskPaper(object):
     """
     def __init__(self, url):
         self.url = url 
+        self.filename = url.split("/")[-1]
         self.children= []
 
     def add_child(self, node):
@@ -147,9 +148,12 @@ def parse_taskpaper(url):
         
 def print_tree(node):
     """
-    For any Taskpaper object, print a formatted tree of its descendants.
+    For any Taskpaper object, print it and a formatted tree of its descendants.
 
     """
+    try:
+        print node.filename
+    except AttributeError:
+        print (node.tabs * '\t') + node.line
     for child in node.children:
-        print (child.tabs * '\t') + child.line
         print_tree(child)
