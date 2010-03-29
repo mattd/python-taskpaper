@@ -157,3 +157,12 @@ def print_tree(node):
         print (node.tabs * '\t') + node.line
     for child in node.children:
         print_tree(child)
+
+def write_tree(node, url):
+    f = open(url, 'wb')
+    def to_string(nodes):
+        output = [(node.tabs * '\t') + node.line + '\n' + to_string(node.children) for node in nodes]
+        return ''.join(output)
+    tp_string = to_string(node.children)
+    f.write(tp_string)
+    f.close()
