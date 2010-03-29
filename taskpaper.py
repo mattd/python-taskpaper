@@ -1,7 +1,7 @@
 """
-Created by Emil Erlandsson 
+Created by Emil Erlandsson
 Modified by Matt Dawson
-Copyright (c) 2009 Matt Dawson 
+Copyright (c) 2009 Matt Dawson
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with this program. If not, see <http://www.gnu.org/licenses/>.    
+along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 """
 
@@ -31,16 +31,16 @@ class Node(object):
         self.children = []
         self.tags = []
         self._parse()
-    
+
     def set_parent(self, parent):
         self.parent = parent
 
     def add_child(self, child):
         self.children.append(child)
-                                                    
+
     def add_tag(self, tag):
         self.tags.append(tag)
-    
+
 
 class ProjectNode(Node):
     """
@@ -52,12 +52,12 @@ class ProjectNode(Node):
         tokens = line.split("@")
         self.name = tokens[0][:-1].strip()
         self.tags = tokens[1:]
-     
-                                                    
+
+
 class TaskNode(Node):
     """
     A task node on a TaskPaper object.
-    
+
     """
     def _parse(self):
         line = self.line.strip()
@@ -76,12 +76,12 @@ class NoteNode(Node):
         tokens = line.split("@")
         self.name = tokens[0].strip()
         self.tags = tokens[1:]
-    
+
 
 class TaskPaper(object):
     """
     A wrapper class for TaskPaper files.
-    
+
     """
     def __init__(self, url):
         self.url = url 
@@ -94,7 +94,7 @@ class TaskPaper(object):
 
         """
         self.children.append(node)
-    
+
 
 def parse_taskpaper(url):
     """
@@ -102,11 +102,11 @@ def parse_taskpaper(url):
 
     """
     handle = file(url)
-    
+
     taskpaper = TaskPaper(url)
     last = None
     for line in handle.readlines():
-        
+
         # Determine what kind of node is on the current line.
         if line.strip().startswith("- "):
             node = TaskNode(line)
@@ -143,9 +143,9 @@ def parse_taskpaper(url):
             # iteration.
             if type(node) != NoteNode:
                 last = node
-                
+
     return taskpaper
-        
+
 def print_tree(node):
     """
     For any Taskpaper object, print it and a formatted tree of its descendants.
