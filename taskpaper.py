@@ -41,6 +41,9 @@ class Node(object):
     def add_tag(self, tag):
         self.tags.append(tag)
 
+    def __str__(self):
+        return "%(tabs)s%(line)s" % { 'tabs': (self.tabs*'\t'), 'line': self.line }
+
 
 class ProjectNode(Node):
     """
@@ -52,7 +55,6 @@ class ProjectNode(Node):
         tokens = line.split("@")
         self.name = tokens[0][:-1].strip()
         self.tags = tokens[1:]
-
 
 class TaskNode(Node):
     """
@@ -86,6 +88,16 @@ class TaskNode(Node):
         s = tag.split("(")
         return s[0], s[1][:-1] if len(s) == 2 else None
 
+    def __str__(self):
+        """
+        >>> t = TaskNode("\t\t- Task @tag @tagWithValue(100)")
+        >>> print t
+        - Task @tag @tagWithValue(100)
+        """
+        tags = ['@%s(%s)' % (t[0], t[1]) if t[1] else "@%s" % t[0] for t in self.tags.items()]
+        return "%(tabs)s- %(name)s %(tags)s" % { 
+                'tabs': (self.tabs * '\t'), 'name': self.name, 'tags': ' '.join(tags) }
+
 class NoteNode(Node):
     """
     A note node on a TaskPaper object.
@@ -96,7 +108,6 @@ class NoteNode(Node):
         tokens = line.split("@")
         self.name = tokens[0].strip()
         self.tags = tokens[1:]
-
 
 class TaskPaper(object):
     """
@@ -136,7 +147,7 @@ class TaskPaper(object):
 
     def __str__(self):
         def to_string(nodes):
-            output = [(node.tabs * '\t') + node.line + '\n' + to_string(node.children) for node in nodes]
+            output = [str(node) + '\n' + to_string(node.children) for node in nodes]
             return ''.join(output)
         tp_string = to_string(self.children)
         return tp_string
