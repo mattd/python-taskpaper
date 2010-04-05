@@ -63,8 +63,28 @@ class TaskNode(Node):
         line = self.line.strip()
         tokens = line.split("@")
         self.name = tokens[0][2:].strip()
-        self.tags = tokens[1:]
+        self.tags = self._parse_tags(tokens[1:])
 
+    def _parse_tags(self, tags):
+        """
+        >>> t = TaskNode("\t\t- Task @tag @tagWithValue(100)")
+        >>> len(t.tags.keys())
+        2
+        >>> print t.tags['tag']
+        None
+        >>> print t.tags['tagWithValue']
+        100
+        """
+        tag_dict = {}
+        for tag in tags:
+            name, value = self._parse_tag(tag)
+            tag_dict[name] = value
+        return tag_dict
+
+    def _parse_tag(self, tag):
+        tag = tag.strip()
+        s = tag.split("(")
+        return s[0], s[1][:-1] if len(s) == 2 else None
 
 class NoteNode(Node):
     """
@@ -82,6 +102,7 @@ class TaskPaper(object):
     """
     A wrapper class for TaskPaper files.
 
+
     """
     def __init__(self, url):
         self.url = url 
@@ -95,6 +116,38 @@ class TaskPaper(object):
         """
         self.children.append(node)
 
+    def filter_by_tag(self, tag_name):
+        """
+        >>> tp = parse_taskpaper('test.taskpaper')
+        >>> tasks = tp.filter_by_tag("tag")
+        >>> len(tasks)
+        3
+        >>> len(tp.filter_by_tag('tagWithValue'))
+        1
+        """
+        def filter_nodes(nodes, tag_name):
+            tasks = []
+            for node in nodes:
+                if isinstance(node, TaskNode) and tag_name in node.tags.keys():
+                    tasks.append(node)
+                tasks.extend(filter_nodes(node.children, tag_name))
+            return tasks
+        return filter_nodes(self.children, tag_name)
+
+    def __str__(self):
+        def to_string(nodes):
+            output = [(node.tabs * '\t') + node.line + '\n' + to_string(node.children) for node in nodes]
+            return ''.join(output)
+        tp_string = to_string(self.children)
+        return tp_string
+
+def parse_taskpaper_from_string(string):
+    import StringIO
+    handle = StringIO.StringIO()
+    handle.write(string)
+
+    return parse_taskpaper_from_file(handle)
+
 
 def parse_taskpaper(url):
     """
@@ -103,6 +156,9 @@ def parse_taskpaper(url):
     """
     handle = file(url)
 
+    return parse_taskpaper_from_file(handle, url)
+
+def parse_taskpaper_from_file(handle, url = ''):
     taskpaper = TaskPaper(url)
     last = None
     for line in handle.readlines():
@@ -166,3 +222,4 @@ def write_tree(node, url):
     tp_string = to_string(node.children)
     f.write(tp_string)
     f.close()
+
