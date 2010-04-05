@@ -91,8 +91,9 @@ class TaskNode(Node):
     def __str__(self):
         """
         >>> t = TaskNode("\t\t- Task @tag @tagWithValue(100)")
+        >>> t.tags['tag'] = "value"
         >>> print t
-        - Task @tag @tagWithValue(100)
+        - Task @tag(value) @tagWithValue(100)
         """
         tags = ['@%s(%s)' % (t[0], t[1]) if t[1] else "@%s" % t[0] for t in self.tags.items()]
         return "%(tabs)s- %(name)s %(tags)s" % { 
