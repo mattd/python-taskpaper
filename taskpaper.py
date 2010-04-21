@@ -25,7 +25,8 @@ class Node(object):
     """
     def __init__(self, line):
         self.tabs = len(line) - len(line.lstrip('\t'))
-        self.line = unicode(line, "utf-8").strip()
+        #self.line = unicode(line, "utf-8").strip()
+        self.line = line.strip()
         self.name = ""
         self.parent = None
         self.children = []
@@ -157,6 +158,7 @@ def parse_taskpaper_from_string(string):
     import StringIO
     handle = StringIO.StringIO()
     handle.write(string)
+    handle.seek(0)
 
     return parse_taskpaper_from_file(handle)
 
