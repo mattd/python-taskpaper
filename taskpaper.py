@@ -211,8 +211,19 @@ class TaskPaper(object):
         "Iterate over all items."
         return self.select(lambda _: True)
 
-    def format(self):
-        return "\n".join([nd.format(True) for nd in self])
+    def format(self, predicate=None, show_parents=True):
+        if predicate:
+            to_show = set()
+            for nd in self.select(predicate):
+                to_show.add(nd)
+                if show_parents:
+                    while nd.parent:
+                        to_show.add(nd.parent)
+                        nd = nd.parent
+            return "\n".join([nd.format(True)
+                              for nd in self.select(lambda nd: nd in to_show)])
+        else:
+            return "\n".join([nd.format(True) for nd in self])
 
     def __str__(self):
         return self.format()
