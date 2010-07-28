@@ -41,6 +41,11 @@ class Node(object):
     def add_child(self, child):
         self.children.append(child)
 
+    def delete(self):
+        "Remove node from parent's children list."
+        if self.parent:
+            self.parent.children.remove(self)
+
     def add_tag(self, tag, value=None):
         self.tags[tag] = value
 
