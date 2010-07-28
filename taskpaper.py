@@ -39,8 +39,8 @@ class Node(object):
     def add_child(self, child):
         self.children.append(child)
 
-    def add_tag(self, tag):
-        self.tags.append(tag)
+    def add_tag(self, tag, value=None):
+        self.tags[tag] = value
 
     def __str__(self):
         return "%(tabs)s%(line)s" % { 'tabs': (self.tabs*'\t'), 'line': self.line }
