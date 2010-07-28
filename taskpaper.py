@@ -42,6 +42,13 @@ class Node(object):
     def add_tag(self, tag, value=None):
         self.tags[tag] = value
 
+    def drop_tag(self, tag):
+        if tag in self.tags:
+            del self.tags[tag]
+            return True
+        else:
+            return False
+
     def __str__(self):
         return "%(tabs)s%(line)s" % { 'tabs': (self.tabs*'\t'), 'line': self.line }
 
