@@ -18,6 +18,8 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 """
 
+import types
+
 class Node(object):
     """
     A generic node on a TaskPaper object.
@@ -135,6 +137,25 @@ class TaskPaper(object):
 
         """
         self.children.append(node)
+
+    def select(self, predicate):
+        "Iterate over nodes, yield only those that match the predicate."
+        to_visit = []
+        to_visit.extend(self.children)
+        while to_visit:
+            node = to_visit.pop()
+            to_visit.extend(node.children)
+            if predicate(node):
+                yield node
+
+    def __getitem__(self, key):
+        # does it look like a string?
+        if isinstance(key, types.StringTypes):
+            # filter by tags
+            return self.select(lambda nd: key in nd.tags)
+        else:
+            # assume it's an index
+            return self.children[key]
 
     def filter_by_tag(self, tag_name):
         """
