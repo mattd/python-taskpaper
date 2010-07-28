@@ -166,14 +166,8 @@ class TaskPaper(object):
         >>> len(tp.filter_by_tag('tagWithValue'))
         1
         """
-        def filter_nodes(nodes, tag_name):
-            tasks = []
-            for node in nodes:
-                if isinstance(node, TaskNode) and tag_name in node.tags.keys():
-                    tasks.append(node)
-                tasks.extend(filter_nodes(node.children, tag_name))
-            return tasks
-        return filter_nodes(self.children, tag_name)
+        return list(self.select(lambda nd: isinstance(nd, TaskNode) \
+                                    and tag_name in nd.tags))
 
     def __str__(self):
         def to_string(nodes):
