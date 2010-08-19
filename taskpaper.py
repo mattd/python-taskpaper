@@ -134,7 +134,7 @@ class TaskItem(object):
             return False
 
     def format(self, with_tabs=True):
-        tag_txt  = " ".join(['@%s' % x if self.tags[x] is None else "%s(%s)" % (x, self.tags[x])
+        tag_txt  = " ".join(['@%s' % x if self.tags[x] is None else "@%s(%s)" % (x, self.tags[x])
                              for x in self.tags])
         tabs_txt = '\t' * self.level() if with_tabs else ''
         return "%s%s%s%s" % (tabs_txt, self.txt, ' ' if tag_txt else '', tag_txt)
